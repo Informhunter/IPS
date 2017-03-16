@@ -20,16 +20,13 @@ import android.widget.ToggleButton;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private float[] currentPoint = new float[2];
+    private float[] selectionPoint = new float[2];
     private Bitmap original;
     private List<DataPoint> data = new ArrayList<>();
 
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 
-            data.add(new DataPoint(device.getName(), rssi, currentPoint));
+            data.add(new RSSIDataPoint(device.getName(), rssi));
 
             TextView textView = (TextView) findViewById(R.id.textLog);
             textView.append("Discovered " + device.getName() + " ");
@@ -81,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         if (btn.isChecked()) {
             //Enable
             textView.setText("Start capture\n");
+            data.add(new PositionDataPoint(selectionPoint[0], selectionPoint[0]));
             isCapturing = true;
             mAdapter.startLeScan(leScanCallback);
         } else {
@@ -112,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         x = (x - loc[0]) / flatPlan.getWidth() * 13.90f;
         y = (y - loc[1]) / flatPlan.getHeight() * 7.35f;
 
-        currentPoint[0] = x;
-        currentPoint[1] = y;
+        selectionPoint[0] = x;
+        selectionPoint[1] = y;
 
         coordsText.append(String.valueOf(x) + " " + String.valueOf(y) + "\n");
 
@@ -160,21 +158,30 @@ public class MainActivity extends AppCompatActivity {
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "datacollector");
         boolean created = folder.mkdirs();
 
-        final String filename = folder.toString() + "/" + "data.csv";
+        String positionDataFile = folder.toString() + "/" + "position_data.csv";
+        String rssiDataFile = folder.toString() + "/" + "rssi_data.csv";
+
 
 
         try {
-            FileWriter fw = new FileWriter(filename);
-            fw.write("PosX,PosY,RSSI,Name,Timestamp\n");
+            FileWriter posFW = new FileWriter(positionDataFile);
+            PositionDataPoint.WriteHeaderToFile(posFW);
+
+            FileWriter rssiFW = new FileWriter(rssiDataFile);
+            RSSIDataPoint.WriteHeaderToFile(rssiFW);
+
             for(DataPoint dp : data) {
-                fw.write(String.format(Locale.US, "%f,%f,%d,%s,%d\n",
-                        dp.Point[0],
-                        dp.Point[1],
-                        dp.RSSI,
-                        dp.Name,
-                        dp.Timestamp));
+                switch (dp.GetPointType()) {
+                    case Position:
+                        dp.WriteToFile(posFW);
+                        break;
+                    case RSSI:
+                        dp.WriteToFile(rssiFW);
+                        break;
+                }
             }
-            fw.close();
+            posFW.close();
+            rssiFW.close();
         } catch (Exception e) {
             e.getMessage();
         }

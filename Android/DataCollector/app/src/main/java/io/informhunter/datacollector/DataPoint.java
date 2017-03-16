@@ -1,21 +1,25 @@
 package io.informhunter.datacollector;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Calendar;
 
 /**
- * Created by informhunter on 04.03.2017.
+ * Created by informhunter on 16.03.2017.
  */
 
-public class DataPoint {
-    public int RSSI;
-    public String Name;
-    public float[] Point;
-    public long Timestamp;
+public abstract class DataPoint {
+    protected DataPointType Type;
+    protected long Timestamp;
 
-    DataPoint(String name, int RSSI, float[] point) {
-        this.Name = name;
-        this.RSSI = RSSI;
-        this.Point = point.clone();
-        this.Timestamp = Calendar.getInstance().getTimeInMillis();
+
+    public DataPoint() {
+        Timestamp = Calendar.getInstance().getTimeInMillis();
+    }
+
+    public abstract void WriteToFile(FileWriter fileWriter) throws IOException;
+
+    public DataPointType GetPointType() {
+        return Type;
     }
 }
