@@ -22,4 +22,9 @@ public abstract class DataPoint {
     public DataPointType GetPointType() {
         return Type;
     }
+
+    public long GetTimestamp() {
+        return Timestamp;
+    }
+
 }

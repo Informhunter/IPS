@@ -7,4 +7,5 @@ package io.informhunter.datacollector;
 public enum DataPointType {
     RSSI,
     Position,
+    LinearAcceleration,
 }
