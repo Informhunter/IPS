@@ -34,7 +34,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="1c20081735b3d8bbd1e5b2ea3f2ddb8e43855075">
+        sha1="8f3b412a0936e2936135ab7e5d2a3e44c21e148e">
         <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_2ee7e84e6693d731ab5e8478bb87ce75306590ad\classes.dex" />
     </item>
     <item
@@ -43,7 +43,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="10f7521c83a1aa5c90d3bc6a3bb5fa2d97c3de78">
+        sha1="44251d3f5afbf8f77217e62e9bf6a21bc95a4ce4">
         <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_e021178db18d63fc6bac0515730d8fb0d6c923c7\classes.dex" />
     </item>
     <item

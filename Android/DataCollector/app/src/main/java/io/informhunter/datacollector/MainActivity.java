@@ -53,9 +53,7 @@ public class MainActivity extends AppCompatActivity {
     final private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-
-            data.add(new RSSIDataPoint(device.getName(), rssi));
-
+            data.add(new RSSIDataPoint(device.getName(), rssi, scanRecord));
             TextView textView = (TextView) findViewById(R.id.textLog);
             textView.append("Discovered " + device.getName() + " ");
             textView.append(String.valueOf(rssi) + "\n");
