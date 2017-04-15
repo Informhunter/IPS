@@ -1,28 +1,31 @@
+import datetime
 from peewee import DateTimeField, TimestampField, FloatField, IntegerField, TextField, ForeignKeyField
-from peewee import Model, Proxy
+from peewee import Model, SqliteDatabase
 
-database_proxy = Proxy()
+database = SqliteDatabase('data.db')
 
 class BaseModel(Model):
     class Meta:
-        database = database_proxy
+        database = database
 
 class CaptureSession(BaseModel):
-    date = DateTimeField()
-    device_id = TextField()
-    device_type = TextField()
+    date = DateTimeField(default=datetime.datetime.now)
+    device_id = TextField(null=True)
+    device_type = TextField(null=True)
 
 class Position(BaseModel):
-    timestamp = TimestampField()
+    timestamp = IntegerField()
     x = FloatField()
     y = FloatField()
     capture_session = ForeignKeyField(CaptureSession, related_name='positions')
 
 class RSSIValue(BaseModel):
-    timestamp = TimestampField()
+    timestamp = IntegerField()
     rssi = IntegerField()
-    beacon_name = TextField()
+    beacon_uuid = TextField()
+    beacon_major = IntegerField()
+    beacon_minor = IntegerField()
     capture_session = ForeignKeyField(CaptureSession, related_name='rssi_values')
 
 def create_tables():
-    database_proxy.create_tables([CaptureSession, Position, RSSIValue])
+    database.create_tables([CaptureSession, Position, RSSIValue])
