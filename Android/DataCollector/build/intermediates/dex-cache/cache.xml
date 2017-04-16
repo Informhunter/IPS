@@ -16,7 +16,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="b19bff27e6d8b51d5d76948fd44fb2f6106f8229">
+        sha1="2f39bbf8523489e59b08d6749935718a50a4e216">
         <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_e021178db18d63fc6bac0515730d8fb0d6c923c7\classes.dex" />
     </item>
 
