@@ -1,5 +1,5 @@
 import datetime
-from peewee import DateTimeField, TimestampField, FloatField, IntegerField, TextField, ForeignKeyField
+from peewee import DateTimeField, FloatField, IntegerField, TextField, ForeignKeyField
 from peewee import Model, SqliteDatabase
 
 database = SqliteDatabase('data.db')

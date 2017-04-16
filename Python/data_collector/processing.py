@@ -27,6 +27,3 @@ def save_data_to_db(rssi_file, position_file):
             pos.timestamp = int(row[2])
             pos.capture_session = sess
             pos.save()
-
-create_tables()
-save_data_to_db('rssi_data.csv', 'position_data.csv')
