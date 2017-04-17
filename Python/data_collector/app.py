@@ -19,8 +19,8 @@ def upload_file():
 
         if rssi_data and position_data:
 
-            rssi_file = NamedTemporaryFile(dir='uploads', delete=False, prefix='rssi')
-            position_file = NamedTemporaryFile(dir='uploads', delete=False, prefix='position')
+            rssi_file = NamedTemporaryFile(dir='uploads', delete=False, prefix='rssi_')
+            position_file = NamedTemporaryFile(dir='uploads', delete=False, prefix='position_')
 
             rssi_data.save(rssi_file)
             position_data.save(position_file)
@@ -47,4 +47,4 @@ def upload_file():
     '''
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")

@@ -1,10 +1,12 @@
 package io.informhunter.datacollector;
 
 import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,6 +17,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Environment;
+import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -25,6 +29,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,12 +66,42 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!mAdapter.isEnabled()) {
@@ -130,9 +165,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         }, mLinearAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
-
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        verifyStoragePermissions(this);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = true;
@@ -295,7 +328,6 @@ public class MainActivity extends AppCompatActivity {
         String positionDataFile = folder.toString() + "/" + "position_data.csv";
         String rssiDataFile = folder.toString() + "/" + "rssi_data.csv";
         String laDataFile = folder.toString() + "/" + "la_data.csv";
-        String DataFile = folder.toString() + "/" + "la_data.csv";
 
 
 
@@ -330,5 +362,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onSendButtonClick(View v) {
+        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "datacollector");
+        boolean created = folder.mkdirs();
 
+        String positionDataFileName = folder.toString() + "/" + "position_data.csv";
+        String rssiDataFileName = folder.toString() + "/" + "rssi_data.csv";
+        //String laDataFile = folder.toString() + "/" + "la_data.csv";
+        TextView textLog = (TextView) findViewById(R.id.textLog);
+
+
+        try {
+            MultipartUtility multipart = new MultipartUtility("http://192.168.42.178:5000/upload", "UTF-8");
+            File rssiDataFile = new File(rssiDataFileName);
+            File positionDataFile = new File(positionDataFileName);
+            multipart.addFilePart("rssi_data", rssiDataFile);
+            multipart.addFilePart("position_data", positionDataFile);
+            multipart.finish();
+        } catch (Exception e) {
+            textLog.append("Exception: " + e.toString() + "\n");
+        }
+        textLog.append("Send data\n");
+    }
 }

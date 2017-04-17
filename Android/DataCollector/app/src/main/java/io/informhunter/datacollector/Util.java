@@ -12,4 +12,13 @@ public class Util {
         }
         return builder.toString();
     }
+
+    public static int BytesToInt(byte[] in) {
+        int result = 0;
+        for(byte b:in){
+            result <<= 8;
+            result |= b;
+        }
+        return result;
+    }
 }

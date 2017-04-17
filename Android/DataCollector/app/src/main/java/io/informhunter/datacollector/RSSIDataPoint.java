@@ -26,17 +26,16 @@ public class RSSIDataPoint extends DataPoint {
     }
 
     public static void WriteHeaderToFile(FileWriter fileWriter) throws IOException {
-        fileWriter.write("UUID,Major,Minor,RSSI,Name,Timestamp\n");
+        fileWriter.write("UUID,Major,Minor,RSSI,Timestamp\n");
     }
 
     @Override
     public void WriteToFile(FileWriter fileWriter) throws IOException {
-        fileWriter.write(String.format(Locale.US, "%s,%s,%s,%d,%s,%d\n",
+        fileWriter.write(String.format(Locale.US, "%s,%d,%d,%d,%d\n",
                 Util.BytesToHex(UUID),
-                Util.BytesToHex(Major),
-                Util.BytesToHex(Minor),
+                Util.BytesToInt(Major),
+                Util.BytesToInt(Minor),
                 RSSI,
-                Name,
                 Timestamp));
     }
 }

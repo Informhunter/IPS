@@ -83,38 +83,45 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="60dp"
+            android:orientation="horizontal">
 
             <Button
-                android:text="Save data"
+                android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/saveButton"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:onClick="onClickButtonSave"
-                android:layout_weight="1" />
-
-            <Button
-                android:text="Clear log"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/clearButton"
-                android:layout_alignParentBottom="true"
-                android:layout_toStartOf="@+id/saveButton"
-                android:layout_marginEnd="13dp"
-                android:onClick="onClickButtonClear"
-                android:layout_weight="0.43" />
-
-            <Button
-                android:text="Reset route"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/resetRouteButton"
                 android:layout_weight="1"
-                android:onClick="onResetRouteButtonClick" />
+                android:onClick="onClickButtonSave"
+                android:text="Save data" />
+
+            <Button
+                android:id="@+id/clearButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="13dp"
+                android:layout_toStartOf="@+id/saveButton"
+                android:layout_weight="0.43"
+                android:onClick="onClickButtonClear"
+                android:text="Clear log" />
+
+            <Button
+                android:id="@+id/resetRouteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onResetRouteButtonClick"
+                android:text="Reset route" />
+
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:onClick="onSendButtonClick"
+                android:text="Send" />
         </LinearLayout>
 
     </LinearLayout>
