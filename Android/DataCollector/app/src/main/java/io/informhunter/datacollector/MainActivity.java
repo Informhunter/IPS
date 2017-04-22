@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,11 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
@@ -40,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
 
     private List<float[]> currentRoute = new ArrayList<>();
     private Iterator<float[]> routeIterator;
-    private float[] currentPoint = new float[2];
+    private float[] currentPoint = new float[]{-5, -5};
 
-    private float[] cursorPoint = new float[2];
+    private float[] cursorPoint = new float[]{-5, -5};
     private Bitmap original;
     private List<DataPoint> data = new ArrayList<>();
 
@@ -117,9 +111,14 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.textLog);
         Button btnNext = (Button) findViewById(R.id.nextPointButton);
 
+
         ToggleButton btn = (ToggleButton) v;
         if (btn.isChecked()) {
             //Enable
+
+            //Clear data buffer
+            data.clear();
+
             textView.setText("Start capture\n");
             routeIterator = currentRoute.iterator();
             if(!routeIterator.hasNext()) {
@@ -135,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //Disable
             textView.setText("Stop capture\n");
+            currentPoint[0] = -5;
+            currentPoint[1] = -5;
             btnNext.setEnabled(false);
             mAdapter.stopLeScan(leScanCallback);
             isCapturing = false;
@@ -157,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         float x = event.getX();
         float y = event.getY();
         coordsText.setText(String.valueOf(x - loc[0]) + " " + String.valueOf(y - loc[1]) + "\n");
-        //drawPoint(x - loc[0], y - loc[1], false);
 
         x = (x - loc[0]) / flatPlan.getWidth() * 13.90f;
         y = (y - loc[1]) / flatPlan.getHeight() * 7.35f;
