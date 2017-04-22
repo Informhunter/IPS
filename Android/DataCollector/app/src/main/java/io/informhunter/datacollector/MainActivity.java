@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -259,8 +260,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveData(List<DataPoint> data) {
 
-        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "datacollector");
-        boolean created = folder.mkdirs();
+        EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
+
+        String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                + "/" + "datacollector" + "/" + captureEdit.getText().toString();
+
+
+        File folder = new File(folderPath);
+        folder.mkdirs();
 
         String positionDataFile = folder.toString() + "/" + "position_data.csv";
         String rssiDataFile = folder.toString() + "/" + "rssi_data.csv";
@@ -300,7 +307,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSendButtonClick(View v) {
-        File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "datacollector");
+        EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
+
+        String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                + "/" + "datacollector" + "/" + captureEdit.getText().toString();
+
+        File folder = new File(folderPath);
 
         String positionDataFileName = folder.toString() + "/" + "position_data.csv";
         String rssiDataFileName = folder.toString() + "/" + "rssi_data.csv";
