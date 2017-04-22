@@ -45,6 +45,38 @@
             android:layout_alignParentStart="true"
             android:layout_weight="0.55" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:text="Collector URL" />
+
+        <EditText
+            android:id="@+id/collectorURLEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="http://192.168.1.135:5000/upload" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:text="Data name" />
+
+        <EditText
+            android:id="@+id/dataNameEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.10"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="capture" />
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -53,7 +85,7 @@
             <ToggleButton
                 android:text="Collect"
                 android:layout_width="153dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/toggleCaptureButton"
                 tools:text="Collect"
                 android:textOff="Start capture"
@@ -66,7 +98,7 @@
             <Button
                 android:text="Add point"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/addPointButton"
                 android:layout_below="@+id/linearLayout"
                 android:layout_alignParentStart="true"
@@ -75,7 +107,7 @@
             <Button
                 android:text="Next point"
                 android:layout_width="wrap_content"
-                android:layout_height="62dp"
+                android:layout_height="36dp"
                 android:id="@+id/nextPointButton"
                 android:onClick="onNextPointButtonClick"
                 android:enabled="false" />
@@ -85,26 +117,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <Button
                 android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
+                android:layout_width="88dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_weight="1"
                 android:onClick="onClickButtonSave"
                 android:text="Save data" />
 
             <Button
                 android:id="@+id/clearButton"
-                android:layout_width="wrap_content"
+                android:layout_width="74dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="13dp"
                 android:layout_toStartOf="@+id/saveButton"
-                android:layout_weight="0.43"
                 android:onClick="onClickButtonClear"
                 android:text="Clear log" />
 
@@ -112,14 +143,13 @@
                 android:id="@+id/resetRouteButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:onClick="onResetRouteButtonClick"
                 android:text="Reset route" />
 
             <Button
                 android:id="@+id/sendButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="32dp"
                 android:onClick="onSendButtonClick"
                 android:text="Send" />
         </LinearLayout>
