@@ -3,6 +3,24 @@
 
     <item
         is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\0b4430c686fe7a0a98872597c4d246cfff5a5e26\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="38789e20ace9ab7dbd00554bd2673ab424478d3b">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ce83ac5368c3f1c082cfac787d077979e010ece0\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.3.1\support-annotations-25.3.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.3.1_b8df17f7ac1d823bf262aa391991c36340d851d9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         optimize="true"
@@ -16,8 +34,107 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="4fd63ce161daeb1061ed1206b9082eb4836342a7">
+        sha1="54c41a86fedce2767b6ee9e19f56f6d76832f3f0">
         <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_e021178db18d63fc6bac0515730d8fb0d6c923c7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\62471363163d79d64f0dce0d1a28649b60a685a6\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_206d879233325eee0276371413e646e501e4db61\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\a8bd5f1d34f88a1ab3287fe3dbaf19ddf7366c49\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="efb8cb62d47d157c29d1521daac7eefd4cb881ee">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_b1c215e44dce4a5774162f549192e8072460cc47\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\e9d72e9a83eb2741581ba1d32250462735261949\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_dcf3c55a6debeea25f6630e7025dc7be9fc895b0\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\684b8bbb3aa6b9e2b128425453d011a2882cf782\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_0c7c19f61b9954eed721ecd99df38dc676e508ee\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\847b168f0b43d526106e67a28cde838a6d5b67fd\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d4cf6227dd6a2ceff0f7dcf0c324380b7abf2c28">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_feb58430778aa1800b332f2447711b377bfdb9aa\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\c0e8c2bf8bbf5753e42d83277c5ea0727385b370\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="95519720620b553f63afc789beba9ad582807f7c">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_cb9d4385ddffb8b16620118e86a752ee0d973b61\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\21d86bb7220c40e1a75c32db3463ce54fdc5def8\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_e606dff1c3a3926d802594535f82e706c342bb6f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\e17251be7f4e537d5d2b0fc5014b97afadcb3c31\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_9bbf4d9a02b1935e908614cf000ec395bc31d69f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\4b043040d34f9cc2c66363b5b1c0087a4938eac8\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6ef31f1555bb4cc513ec8d52711365a8b89f3600">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_7d47c0119689149ae0b030d782b006ef03709e10\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\b3db534f666b907750f44fb9b1e9896237a76227\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4760aaa18553d82e41c9dec10dc6a1dc04a3935a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\informhunter\.android\build-cache\b72bb2697fe464022961a1b7dd700cab465b6b1b\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="150252b33b00274cc868578ade018fda0d43a3eb">
+        <dex dex="C:\Data\Projects\IPS\Android\DataCollector\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_006ee5f2454707d62305005337b5bae33ce7324f\classes.dex" />
     </item>
 
 </items>
