@@ -24,12 +24,12 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,16 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap original;
     private List<DataPoint> data = new ArrayList<>();
 
-    private SensorManager mSensorManager;
-    private Sensor mLinearAccSensor;
-    private Sensor mMagneticSensor;
-    private Sensor mGravitySensor;
-
-    private float[] gravityValues = null;
-    private float[] magneticValues = null;
-
     private boolean isCapturing = false;
     private BluetoothAdapter mAdapter;
+
     final private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
@@ -108,62 +101,6 @@ public class MainActivity extends AppCompatActivity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, 1);
         }
-
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mLinearAccSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        mGravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-
-        mSensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                magneticValues = event.values;
-            }
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-        }, mMagneticSensor, SensorManager.SENSOR_DELAY_FASTEST);
-
-        mSensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                gravityValues = event.values;
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        }, mGravitySensor, SensorManager.SENSOR_DELAY_FASTEST);
-
-        mSensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                if(!isCapturing || gravityValues == null || magneticValues == null) {
-                    return;
-                }
-
-                float[] deviceRelativeAcceleration = new float[4];
-                deviceRelativeAcceleration[0] = event.values[0];
-                deviceRelativeAcceleration[1] = event.values[1];
-                deviceRelativeAcceleration[2] = event.values[2];
-                deviceRelativeAcceleration[3] = 0;
-                float[] R = new float[16], I = new float[16], earthAcc = new float[16];
-
-                SensorManager.getRotationMatrix(R, I, gravityValues, magneticValues);
-
-                float[] inv = new float[16];
-                android.opengl.Matrix.invertM(inv, 0, R, 0);
-                android.opengl.Matrix.multiplyMV(earthAcc, 0, inv, 0, deviceRelativeAcceleration, 0);
-
-                data.add(new VectorDataPoint(
-                        earthAcc[0],
-                        earthAcc[1],
-                        earthAcc[2],
-                        DataPointType.LinearAcceleration));
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        }, mLinearAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         verifyStoragePermissions(this);
 
@@ -364,16 +301,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSendButtonClick(View v) {
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "datacollector");
-        boolean created = folder.mkdirs();
 
         String positionDataFileName = folder.toString() + "/" + "position_data.csv";
         String rssiDataFileName = folder.toString() + "/" + "rssi_data.csv";
-        //String laDataFile = folder.toString() + "/" + "la_data.csv";
         TextView textLog = (TextView) findViewById(R.id.textLog);
+
+        EditText urlEdit = (EditText) findViewById(R.id.collectorURLEdit);
 
 
         try {
-            MultipartUtility multipart = new MultipartUtility("http://192.168.42.178:5000/upload", "UTF-8");
+            MultipartUtility multipart = new MultipartUtility(urlEdit.getText().toString(), "UTF-8");
             File rssiDataFile = new File(rssiDataFileName);
             File positionDataFile = new File(positionDataFileName);
             multipart.addFilePart("rssi_data", rssiDataFile);
