@@ -9,9 +9,8 @@ class BaseModel(Model):
         database = database
 
 class CaptureSession(BaseModel):
+    name = TextField(unique=True)
     date = DateTimeField(default=datetime.datetime.now)
-    device_id = TextField(null=True)
-    device_type = TextField(null=True)
 
 class Position(BaseModel):
     timestamp = IntegerField()

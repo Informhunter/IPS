@@ -3,12 +3,17 @@ from peewee import SqliteDatabase
 from models import CaptureSession, RSSIValue, Position
 from models import database, create_tables
 
-def save_data_to_db(rssi_file, position_file):
+def save_data_to_db(rssi_file, position_file, session_file):
     rssi_data = list(csv.reader(open(rssi_file, 'r')))
     position_data = list(csv.reader(open(position_file, 'r')))
 
+    with open(session_file, 'r') as f:
+        session_name, session_date = [x.rstrip() for x in f]
+
     with database.atomic():
         sess = CaptureSession()
+        sess.name = session_name
+        sess.date = session_date
         sess.save()
         for row in rssi_data[1:]:
             rssi = RSSIValue()
