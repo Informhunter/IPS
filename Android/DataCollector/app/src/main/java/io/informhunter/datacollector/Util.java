@@ -17,7 +17,7 @@ public class Util {
         int result = 0;
         for(byte b:in){
             result <<= 8;
-            result |= b;
+            result |= (b & 0xff);
         }
         return result;
     }

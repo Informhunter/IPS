@@ -27,6 +27,8 @@ import android.widget.ToggleButton;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -260,30 +262,38 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveData(List<DataPoint> data) {
 
+
         EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
 
+        String sessionName = captureEdit.getText().toString();
+
         String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                + "/" + "datacollector" + "/" + captureEdit.getText().toString();
+                + "/" + "datacollector" + "/" + sessionName;
 
 
         File folder = new File(folderPath);
-        folder.mkdirs();
+        boolean created = folder.mkdirs();
 
-        String positionDataFile = folder.toString() + "/" + "position_data.csv";
-        String rssiDataFile = folder.toString() + "/" + "rssi_data.csv";
-        String laDataFile = folder.toString() + "/" + "la_data.csv";
+        if(!created) {
+            return;
+        }
 
-
+        String positionDataFileName = folder.getPath() + "/" + "position_data.csv";
+        String rssiDataFileName = folder.getPath() + "/" + "rssi_data.csv";
+        String sessionInfoFileName = folder.getPath() + "/" + "session_info.csv";
 
         try {
-            FileWriter posFW = new FileWriter(positionDataFile);
+            FileWriter posFW = new FileWriter(positionDataFileName);
             PositionDataPoint.WriteHeaderToFile(posFW);
 
-            FileWriter rssiFW = new FileWriter(rssiDataFile);
+            FileWriter rssiFW = new FileWriter(rssiDataFileName);
             RSSIDataPoint.WriteHeaderToFile(rssiFW);
 
-            FileWriter laFW = new FileWriter(laDataFile);
-            VectorDataPoint.WriteHeaderToFile(laFW);
+            FileWriter sessFW = new FileWriter(sessionInfoFileName);
+
+            sessFW.write(sessionName + "\n");
+            sessFW.write(new Date().toString());
+            sessFW.close();
 
             for(DataPoint dp : data) {
                 switch (dp.GetPointType()) {
@@ -293,14 +303,10 @@ public class MainActivity extends AppCompatActivity {
                     case RSSI:
                         dp.WriteToFile(rssiFW);
                         break;
-                    case LinearAcceleration:
-                        dp.WriteToFile(laFW);
-                        break;
                 }
             }
             posFW.close();
             rssiFW.close();
-            laFW.close();
         } catch (Exception e) {
             e.getMessage();
         }
@@ -316,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
         String positionDataFileName = folder.toString() + "/" + "position_data.csv";
         String rssiDataFileName = folder.toString() + "/" + "rssi_data.csv";
+        String sessionInfoFileName = folder.getPath() + "/" + "session_info.csv";
         TextView textLog = (TextView) findViewById(R.id.textLog);
 
         EditText urlEdit = (EditText) findViewById(R.id.collectorURLEdit);
@@ -325,8 +332,10 @@ public class MainActivity extends AppCompatActivity {
             MultipartUtility multipart = new MultipartUtility(urlEdit.getText().toString(), "UTF-8");
             File rssiDataFile = new File(rssiDataFileName);
             File positionDataFile = new File(positionDataFileName);
+            File sessionDataFile = new File(sessionInfoFileName);
             multipart.addFilePart("rssi_data", rssiDataFile);
             multipart.addFilePart("position_data", positionDataFile);
+            multipart.addFilePart("session_data", sessionDataFile);
             multipart.finish();
         } catch (Exception e) {
             textLog.append("Exception: " + e.toString() + "\n");
