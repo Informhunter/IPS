@@ -128,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             float[] point = routeIterator.next();
-            data.add(new PositionDataPoint(point[0], point[1]));
+            currentPoint[0] = point[0];
+            currentPoint[1] = point[1];
             btnNext.setEnabled(true);
             btnNext.callOnClick();
             isCapturing = true;
