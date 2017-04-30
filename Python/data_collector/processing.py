@@ -1,8 +1,6 @@
-import numpy as np
 import csv
-from peewee import SqliteDatabase
 from models import CaptureSession, RSSIValue, Position
-from models import database, create_tables
+from models import database
 
 def save_data_to_db(rssi_file, position_file, session_file):
     rssi_data = list(csv.reader(open(rssi_file, 'r')))
@@ -62,6 +60,7 @@ def export_data_from_db(session_name):
 def apply_smoothing_to_rssi_values(data):
     return data
 
+
 def build_rssi_pos(session_names=[]):
     sessions = (CaptureSession.select()
                 .where(CaptureSession.name << session_names))
@@ -83,12 +82,24 @@ def build_rssi_pos(session_names=[]):
             end_y = session.positions[current].y
             delta_y = end_y - start_y
             
-            while processed_rssi[i].timestamp <= end_t:
+            while i < len(processed_rssi) and processed_rssi[i].timestamp <= end_t:
                 px = start_x + delta_x * (session.rssi_values[i].timestamp - start_t) / float(delta_t)
                 py = start_y + delta_y * (session.rssi_values[i].timestamp - start_t) / float(delta_t)
                 data.append((
                     processed_rssi[i].beacon_uuid,
                     processed_rssi[i].beacon_major,
                     processed_rssi[i].beacon_minor,
-                    processed_rssi[i].rssi, px, py))
+                    processed_rssi[i].rssi, px, py,
+                    processed_rssi[i].timestamp,
+                    session.id
+                ))
                 i += 1
+    return data
+
+
+def export_rssi_pos(session_names=[], outname="data.csv"):
+    data = build_rssi_pos(session_names)
+    with open(outname, 'w') as f:
+        f.write("UUID,Major,Minor,RSSI,X,Y,Timestamp,SessId\n")
+        for item in data:
+            f.write("{},{},{},{},{},{},{},{}\n".format(*item))
