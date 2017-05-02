@@ -48,7 +48,7 @@ def export_data_from_db(session_name):
             ))
 
     with open(session_name + '_position.txt', 'w') as f:
-        f.write('PosX,PosY,Timestamp\n')
+        f.write('X,Y,Timestamp\n')
         for pos in session.positions:
             f.write("{},{},{}\n".format(
                 pos.x,
