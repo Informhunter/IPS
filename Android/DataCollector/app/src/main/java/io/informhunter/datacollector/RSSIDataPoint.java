@@ -38,4 +38,24 @@ public class RSSIDataPoint extends DataPoint {
                 RSSI,
                 Timestamp));
     }
+
+    public int GetRSSI() {
+        return RSSI;
+    }
+
+    public String GetName() {
+        return Name;
+    }
+
+    public byte[] GetUUID() {
+        return UUID;
+    }
+
+    public byte[] GetMajor() {
+        return Major;
+    }
+
+    public byte[] GetMinor() {
+        return Minor;
+    }
 }
