@@ -21,6 +21,16 @@ def create_rssi_median_filter(kernel=9):
         return new_df
     return median_filter
 
+#Create averaging filter function with desired kernel size
+
+def create_rssi_avg_filter(kernel=9):
+	def avg_filter(df):
+		smoothed = df.RSSI.rolling(kernel).mean()
+		new_df = df.copy()
+		new_df.RSSI = smoothed
+		return new_df
+	return avg_filter
+
 #Filter session RSSI values for each minor with desired filter
 
 def filter_session(sess_df, filter_func=rssi_lowess_filter):
@@ -38,6 +48,6 @@ def filter_rssi_df(df, filter_func=rssi_lowess_filter):
     result = pd.DataFrame()
     for sess_id in sorted(df.SessId.unique()):
         result = result.append(
-				filter_session(df[df.SessId == sess_id])
+				filter_session(df[df.SessId == sess_id], filter_func)
 			)
     return result
