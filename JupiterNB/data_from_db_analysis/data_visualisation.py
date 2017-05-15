@@ -2,12 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from data_filtration import filter_rssi_df
 
+#Plot some graph over image of flat plan
 
 def plot_over_image(img, x, y, **kwargs):
     scaleX = img.shape[1] / 13.9
     scaleY = img.shape[0] / 7.35
     plt.imshow(img)
     plt.plot(x * scaleX, y * scaleY, **kwargs)
+
+#Scatter some graph over image of flat plan
 
 def scatter_over_image(img, x, y, **kwargs):
     scaleX = img.shape[1] / 13.9
@@ -48,7 +51,7 @@ def plot_rssi_map(df, flat_img, figsize=(15, 10), filter_func=None):
 
 #Plot route, RSSI graphs and RSSI maps
 
-def plot_session(df, flat_img, filter_func=lambda x: x):
+def plot_session(df, flat_img, filter_func=None):
     plt.title("Route")
     scatter_over_image(flat_img, df.X, df.Y)
     plot_rssi_data(df, filter_func=filter_func)
