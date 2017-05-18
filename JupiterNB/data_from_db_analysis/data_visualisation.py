@@ -3,36 +3,41 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from data_filtration import filter_rssi_df
 
+def convert_coords(img, x, y):
+    return x * img.shape[1] / 13.9, y * img.shape[0] / 7.35
+
 #Plot some graph in image coordinates
 
 def plot_in_image(img, x, y, **kwargs):
-    scaleX = img.shape[1] / 13.9
-    scaleY = img.shape[0] / 7.35
-    plt.plot(x * scaleX, y * scaleY, **kwargs)
+    x, y = convert_coords(img, x, y)
+    plt.plot(x, y, **kwargs)
 
 #Scatter some graph in image coordinates
 
 def scatter_in_image(img, x, y, **kwargs):
-    scaleX = img.shape[1] / 13.9
-    scaleY = img.shape[0] / 7.35
-    plt.scatter(x * scaleX, y * scaleY, **kwargs)
-
-
+    x, y = convert_coords(img, x, y)
+    plt.scatter(x, y, **kwargs)
+    
 #Plot some graph over image of flat plan
 
 def plot_over_image(img, x, y, **kwargs):
-    scaleX = img.shape[1] / 13.9
-    scaleY = img.shape[0] / 7.35
+    x, y = convert_coords(img, x, y)
     plt.imshow(img)
-    plt.plot(x * scaleX, y * scaleY, **kwargs)
+    plt.plot(x, y, **kwargs)
 
 #Scatter some graph over image of flat plan
 
 def scatter_over_image(img, x, y, **kwargs):
-    scaleX = img.shape[1] / 13.9
-    scaleY = img.shape[0] / 7.35
+    x, y = convert_coords(img, x, y)
     plt.imshow(img)
-    plt.scatter(x * scaleX, y * scaleY, **kwargs)
+    plt.scatter(x, y, **kwargs)
+
+
+def plot_beacons(beacons, img):
+    for _, beacon in beacons.iterrows():
+        x, y = convert_coords(img, beacon['X'], beacon['Y'])
+        plt.scatter([x], [y])
+        plt.annotate(beacon.Minor, xy=(x, y))
 
 #Plot RSSI over time for all minors
 
@@ -76,7 +81,7 @@ def plot_rssi_map(df, flat_img, figsize=(15, 10), beacons=pd.DataFrame(), filter
         plt.ylabel('Y')
         scatter_over_image(flat_img, bd.X, bd.Y, c=-bd.RSSI, cmap='Greys')
         if not beacons.empty:
-            scatter_in_image(flat_img, beacons.X, beacons.Y)
+            plot_beacons(beacons, flat_img)
 
 #Plot route, RSSI graphs and RSSI maps
 
@@ -84,6 +89,6 @@ def plot_session(df, flat_img, beacons=pd.DataFrame(), filter_func=None):
     plt.title("Route")
     scatter_over_image(flat_img, df.X, df.Y)
     if not beacons.empty:
-        scatter_in_image(flat_img, beacons.X, beacons.Y)
+        plot_beacons(beacons, flat_img)
     plot_rssi_data(df, filter_func=filter_func)
     plot_rssi_map(df, flat_img, beacons=beacons, filter_func=filter_func)
