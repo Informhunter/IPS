@@ -41,10 +41,11 @@ def plot_beacons(beacons, img):
 
 #Plot RSSI over time for all minors
 
-def plot_rssi_data(df, figsize=(15, 10), filter_func=None):
+def plot_rssi_data(df, figsize=(30, 20), filter_func=None):
     min_time = df.Timestamp.min()
     unique_minors = sorted(df.Minor.unique())
     fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(wspace=0.3)
     for i, minor in enumerate(unique_minors):
         if filter_func != None:
             bd = filter_rssi_df(
@@ -62,10 +63,11 @@ def plot_rssi_data(df, figsize=(15, 10), filter_func=None):
 #Plot data points for all minors at their estimated location
 #with color dependent on RSSI
 
-def plot_rssi_map(df, flat_img, figsize=(15, 10), beacons=pd.DataFrame(), filter_func=None):
+def plot_rssi_map(df, flat_img, figsize=(30, 20), beacons=pd.DataFrame(), filter_func=None):
     min_time = df.Timestamp.min()
     unique_minors = sorted(df.Minor.unique())
     fig = plt.figure(figsize=figsize)
+    fig.subplots_adjust(wspace=0.3)
     for i, minor in enumerate(unique_minors):
         if filter_func != None:
             bd = filter_rssi_df(
@@ -85,7 +87,8 @@ def plot_rssi_map(df, flat_img, figsize=(15, 10), beacons=pd.DataFrame(), filter
 
 #Plot route, RSSI graphs and RSSI maps
 
-def plot_session(df, flat_img, beacons=pd.DataFrame(), filter_func=None):
+def plot_session(df, flat_img, figsize=(10, 7), beacons=pd.DataFrame(), filter_func=None):
+    fig = plt.figure(figsize=figsize)
     plt.title("Route")
     scatter_over_image(flat_img, df.X, df.Y)
     if not beacons.empty:
