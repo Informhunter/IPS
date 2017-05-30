@@ -30,12 +30,12 @@ public class Locator {
         minorMap.get(minor).AddPoint((float)dp.GetRSSI());
     }
 
-    public Map<Integer, Float> GetAverages() {
+    public RSSIPack GetAverages() {
         Map<Integer, Float> result = new HashMap<>();
         for(int key : minorMap.keySet()) {
             result.put(key, minorMap.get(key).Average());
         }
-        return result;
+        return new RSSIPack(result);
     }
 
     public Location GetLocation() {
