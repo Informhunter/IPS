@@ -25,7 +25,7 @@ def create_rssi_median_filter(kernel=9):
 
 def create_rssi_avg_filter(kernel=9):
 	def avg_filter(df):
-		smoothed = df.RSSI.rolling(kernel).mean()
+		smoothed = df.RSSI.rolling(kernel, min_periods=1).mean()
 		new_df = df.copy()
 		new_df.RSSI = smoothed
 		return new_df
