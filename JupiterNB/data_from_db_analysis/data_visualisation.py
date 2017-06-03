@@ -10,18 +10,27 @@ def convert_coords(img, x, y):
 
 def plot_in_image(img, x, y, **kwargs):
     x, y = convert_coords(img, x, y)
+    plt.xticks([])
+    plt.yticks([])
+    plt.axis('off')
     plt.plot(x, y, **kwargs)
 
 #Scatter some graph in image coordinates
 
 def scatter_in_image(img, x, y, **kwargs):
     x, y = convert_coords(img, x, y)
+    plt.xticks([])
+    plt.yticks([])
+    plt.axis('off')
     plt.scatter(x, y, **kwargs)
     
 #Plot some graph over image of flat plan
 
 def plot_over_image(img, x, y, **kwargs):
     x, y = convert_coords(img, x, y)
+    plt.xticks([])
+    plt.yticks([])
+    plt.axis('off')
     plt.imshow(img)
     plt.plot(x, y, **kwargs)
 
@@ -29,6 +38,9 @@ def plot_over_image(img, x, y, **kwargs):
 
 def scatter_over_image(img, x, y, **kwargs):
     x, y = convert_coords(img, x, y)
+    plt.xticks([])
+    plt.yticks([])
+    plt.axis('off')
     plt.imshow(img)
     plt.scatter(x, y, **kwargs)
 
@@ -56,8 +68,8 @@ def plot_rssi_data(df, figsize=(30, 20), filter_func=None):
             bd = df[df.Minor == minor]
         ax = plt.subplot(int(np.ceil(len(unique_minors) / 3)), 3, 1 + i)
         ax.set_title(str(minor))
-        plt.xlabel('Time')
-        plt.ylabel('RSSI')
+        plt.xlabel('Time (ms)')
+        plt.ylabel('RSSI (db)')
         plt.plot(bd.Timestamp-min_time, bd.RSSI)
 
 #Plot data points for all minors at their estimated location
