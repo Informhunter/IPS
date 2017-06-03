@@ -1,3 +1,5 @@
 numpy
 peewee
 flask
+pandas
+sklearn

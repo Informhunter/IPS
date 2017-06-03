@@ -1,6 +1,7 @@
 from tempfile import NamedTemporaryFile
 from flask import Flask, request, redirect, url_for
-from processing import save_data_to_db
+from processing import save_data_to_db, export_rssi_map
+from models import CaptureSession
 
 UPLOAD_FOLDER = 'uploads'
 
@@ -50,6 +51,13 @@ def upload_file():
       <input type='submit' value='Upload'>
     </form>
     '''
+
+@app.route('/build_map', methods=['GET'])
+def build_map():
+	session_names = [x.name for x in CaptureSession.select()]
+	export_rssi_map(session_names[:-2])
+	return ''
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")

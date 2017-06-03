@@ -1,3 +1,7 @@
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import KNeighborsRegressor
+from data_filtration import filter_rssi_df, create_rssi_avg_filter
 import csv
 from models import CaptureSession, RSSIValue, Position
 from models import database
@@ -96,10 +100,37 @@ def build_rssi_pos(session_names=[]):
                 i += 1
     return data
 
-
-def export_rssi_pos(session_names=[], outname="data.csv"):
+def export_rssi_pos(session_names=[], outname='data.csv'):
     data = build_rssi_pos(session_names)
     with open(outname, 'w') as f:
         f.write("UUID,Major,Minor,RSSI,X,Y,Timestamp,SessId\n")
         for item in data:
             f.write("{},{},{},{},{},{},{},{}\n".format(*item))
+
+def build_rssi_map(session_names=[]):
+	data = build_rssi_pos(session_names)
+	df = pd.DataFrame(data, columns=['UUID','Major','Minor','RSSI','X','Y','Timestamp','SessId'])
+	df = df[df.UUID == 'b9407f30f5f8466eaff925556b57fe6d']
+	df = filter_rssi_df(df, filter_func=create_rssi_avg_filter(17))
+	result = np.array([])
+	minors = sorted(df.Minor.unique())
+	xy = np.mgrid[0:15:1, 0:-8:-1].reshape(2,-1).T
+	for minor in minors:
+		minor_df = df[df.Minor == minor]
+		train_in = minor_df[['X', 'Y']].as_matrix()
+		train_out = -minor_df[['RSSI']].as_matrix().ravel()
+		reg = KNeighborsRegressor(n_neighbors=10, weights='distance')
+		reg.fit(train_in, train_out)
+		pred = reg.predict(xy)
+		if len(result) == 0:
+			result = pred.reshape(-1, 1)
+		else:
+			result = np.hstack((result, pred.reshape(-1, 1)))
+	
+	return (xy, result)
+
+def export_rssi_map(session_names=[], outname='map.csv'):
+	xy, m = build_rssi_map(session_names)
+	with open(outname, 'w') as f:
+		for coords, rssis in zip(xy, m):
+			f.write("{} {} {} {} {} {} {}\n".format(*coords, *rssis))
