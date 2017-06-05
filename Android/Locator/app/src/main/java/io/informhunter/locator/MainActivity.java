@@ -11,18 +11,29 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 
+import io.informhunter.locator.positioning.Location;
 import io.informhunter.locator.positioning.Locator;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
                     textView.append(String.valueOf(minor) + ": ");
                     textView.append(String.valueOf(averages.get(minor)) + "\n");
                 }
+                textView.append("Best dist: ");
+                textView.append(String.valueOf(locator.GetBestDistance()) + "\n");
+                Location l = locator.GetLocation();
+                cursorPoint[0] = l.GetX();
+                cursorPoint[1] = l.GetY();
+                redrawPlan();
             }
         }
     };
@@ -160,8 +177,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void onUpdateButtonClick(View v) {
+        EditText url = (EditText)findViewById(R.id.collectorURLEdit);
+        TextView textView = (TextView) findViewById(R.id.textLog);
+        textView.append("Try download " + url.getText().toString());
+        textView.append("\n");
+        new DownloadFileFromURL().execute(url.getText().toString());
+    }
+
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            TextView textView = (TextView) findViewById(R.id.textLog);
+            textView.append("Download started\n");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... f_url) {
+            String mapFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                    + "/" + "datacollector" + "/" + "map.csv";
+            try {
+                HttpDownloadUtility.downloadFile(f_url[0], mapFileName);
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String file_url) {
+            TextView textView = (TextView) findViewById(R.id.textLog);
+            textView.append("Download finished\n");
+        }
 
     }
 

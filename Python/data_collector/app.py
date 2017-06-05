@@ -1,5 +1,5 @@
 from tempfile import NamedTemporaryFile
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, send_file
 from processing import save_data_to_db, export_rssi_map
 from models import CaptureSession
 
@@ -55,8 +55,13 @@ def upload_file():
 @app.route('/build_map', methods=['GET'])
 def build_map():
 	session_names = [x.name for x in CaptureSession.select()]
-	export_rssi_map(session_names[:-2])
+	export_rssi_map(session_names)
 	return ''
+
+
+@app.route('/download', methods=['GET'])
+def download():
+	return send_file('map.csv') 
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ package io.informhunter.locator.positioning;
  * Created by informhunter on 29.05.2017.
  */
 
-class Location {
+public class Location {
     private Float X;
     private Float Y;
 

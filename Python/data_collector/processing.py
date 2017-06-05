@@ -119,7 +119,7 @@ def build_rssi_map(session_names=[]):
 		minor_df = df[df.Minor == minor]
 		train_in = minor_df[['X', 'Y']].as_matrix()
 		train_out = -minor_df[['RSSI']].as_matrix().ravel()
-		reg = KNeighborsRegressor(n_neighbors=10, weights='distance')
+		reg = KNeighborsRegressor(n_neighbors=3)
 		reg.fit(train_in, train_out)
 		pred = reg.predict(xy)
 		if len(result) == 0:
@@ -129,8 +129,31 @@ def build_rssi_map(session_names=[]):
 	
 	return (xy, result)
 
+def build_alternative_rssi_map(session_names=[]):
+	data = build_rssi_pos(session_names)
+	df = pd.DataFrame(data, columns=['UUID','Major','Minor','RSSI','X','Y','Timestamp','SessId'])
+	df = df[df.UUID == 'b9407f30f5f8466eaff925556b57fe6d']
+	sessions = df.SessId.unique()
+	coords = []
+	packs = []
+	for session in sessions:
+		sess_df = df[df.SessId == session]
+		x = sess_df.X.mean()
+		y = sess_df.Y.mean()
+		minors = sorted(sess_df.Minor.unique())
+		rssis = []
+		for minor in minors:
+			rssis.append(sess_df[sess_df.Minor == minor].RSSI.mean())
+		coords.append((x, y))
+		packs.append(rssis)
+	return coords, packs
+
+
+
+
 def export_rssi_map(session_names=[], outname='map.csv'):
-	xy, m = build_rssi_map(session_names)
+	xy, m = build_alternative_rssi_map(session_names)
 	with open(outname, 'w') as f:
 		for coords, rssis in zip(xy, m):
 			f.write("{} {} {} {} {} {} {}\n".format(*coords, *rssis))
+

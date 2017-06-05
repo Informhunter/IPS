@@ -1,6 +1,9 @@
 package io.informhunter.locator.positioning;
 
 
+import android.os.Environment;
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,15 +17,21 @@ import io.informhunter.locator.Util;
 
 public class Locator {
 
-    private int windowSize = 21;
+    private int windowSize = 17;
     private RSSIMap rssiMap;
     private Map<Integer, Window> minorMap;
 
     public Locator() {
         minorMap = new HashMap<>();
+        String mapFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                + "/" + "datacollector" + "/" + "map.csv";
+        rssiMap = new RSSIMap(mapFileName);
     }
 
     public void AddDataPoint(RSSIDataPoint dp) {
+        if(!Util.BytesToHex(dp.GetUUID()).equals("b9407f30f5f8466eaff925556b57fe6d")) {
+            return;
+        }
         int minor = Util.BytesToInt(dp.GetMinor());
         if(!minorMap.containsKey(minor)) {
             minorMap.put(minor, new Window(windowSize));
@@ -30,15 +39,19 @@ public class Locator {
         minorMap.get(minor).AddPoint((float)dp.GetRSSI());
     }
 
-    public RSSIPack GetAverages() {
+    public Map<Integer, Float> GetAverages() {
         Map<Integer, Float> result = new HashMap<>();
         for(int key : minorMap.keySet()) {
             result.put(key, minorMap.get(key).Average());
         }
-        return new RSSIPack(result);
+        return result;
     }
 
     public Location GetLocation() {
-        return rssiMap.FindClosest(GetAverages());
+        return rssiMap.FindClosest(new RSSIPack(GetAverages()));
+    }
+
+    public float GetBestDistance() {
+        return rssiMap.GetBestDistance();
     }
 }
