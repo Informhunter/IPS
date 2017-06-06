@@ -1,10 +1,10 @@
 from fabric.api import *
 
-#env.hosts = [
-#		"192.168.43.123",
-#		"192.168.43.94",
-#		"192.168.43.175",
-#]
+env.hosts = [
+		"192.168.1.229",
+		"192.168.1.130",
+		"192.168.1.101",
+]
 
 env.user = "pi"
 env.password = "raspberry"

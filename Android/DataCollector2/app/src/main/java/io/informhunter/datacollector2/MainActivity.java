@@ -28,7 +28,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private float[] cursorPoint = new float[]{-5, -5};
     private Bitmap original;
     private List<DataPoint> data = new ArrayList<>();
+    private Set<Integer> minorSet;
 
     private boolean isCapturing = false;
     private BluetoothAdapter mAdapter;
@@ -43,10 +46,11 @@ public class MainActivity extends AppCompatActivity {
     final private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-            data.add(new RSSIDataPoint(device.getName(), rssi, scanRecord));
+            RSSIDataPoint dp = new RSSIDataPoint(device.getName(), rssi, scanRecord);
+            data.add(dp);
+            minorSet.add(Util.BytesToInt(dp.GetMinor()));
             TextView textView = (TextView) findViewById(R.id.textLog);
-            textView.append("Discovered " + device.getName() + " ");
-            textView.append(String.valueOf(rssi) + "\n");
+            textView.setText("Minors count: " + String.valueOf(minorSet.size()));
         }
     };
 
@@ -101,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
         original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
+
+        minorSet = new HashSet<>();
     }
 
 
@@ -111,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         if (btn.isChecked()) {
             //Enable
             textView.setText("Start capture\n");
+            minorSet.clear();
             isCapturing = true;
             data.add(new PositionDataPoint(cursorPoint[0], cursorPoint[1]));
             mAdapter.startLeScan(leScanCallback);

@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
         original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
 
-        locator = new Locator();
 
     }
 
@@ -160,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onClickButtonLocate(View v) {
+
+        locator = new Locator();
         TextView textView = (TextView) findViewById(R.id.textLog);
         Button btnNext = (Button) findViewById(R.id.updateButton);
 

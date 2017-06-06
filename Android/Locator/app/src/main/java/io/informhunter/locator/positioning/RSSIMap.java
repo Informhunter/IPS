@@ -13,7 +13,7 @@ import java.util.Scanner;
  */
 class RSSIMap {
 
-    private int[] beaconMinors = new int[]{9609, 9616, 9617, 9618, 9619};
+    private int[] beaconMinors = new int[]{9609, 9616, 9617, 9618, 9619, 9620, 9621, 9622};
 
     Map<Location, RSSIPack> rssiMap;
     float distance = 0;
@@ -25,12 +25,15 @@ class RSSIMap {
             while(scanner.hasNext()) {
                 float x = scanner.nextFloat();
                 float y = scanner.nextFloat();
-                HashMap<Integer, Float> pack = new HashMap<>();
+                HashMap<Integer, Float> rssiPack = new HashMap<>();
+                HashMap<Integer, Float> stdPack = new HashMap<>();
                 for(int i = 0; i < beaconMinors.length; i++) {
                     float rssi = scanner.nextFloat();
-                    pack.put(beaconMinors[i], rssi);
+                    float std = scanner.nextFloat();
+                    rssiPack.put(beaconMinors[i], rssi);
+                    stdPack.put(beaconMinors[i], std);
                 }
-                rssiMap.put(new Location(x, y), new RSSIPack(pack));
+                rssiMap.put(new Location(x, y), new RSSIPack(rssiPack, stdPack));
             }
             scanner.close();
         } catch (Exception ex) {
@@ -42,7 +45,9 @@ class RSSIMap {
         float bestDist = 100000000;
         Location bestLocation = new Location(0, 0);
         for(Location location : rssiMap.keySet()) {
-            float dist = rssiMap.get(location).EucledianDistance(fingerprint);
+            //float dist = rssiMap.get(location).EucledianDistance(fingerprint);
+            //float dist = rssiMap.get(location).CosineDistance(fingerprint);
+            float dist = rssiMap.get(location).GaussianDistance(fingerprint);
             if(bestDist > dist) {
                 bestDist = dist;
                 bestLocation = location;
@@ -60,7 +65,6 @@ class RSSIMap {
         distance = bestDist;
         return bestLocation;
     }
-
 
     public float GetBestDistance() {
         return distance;
