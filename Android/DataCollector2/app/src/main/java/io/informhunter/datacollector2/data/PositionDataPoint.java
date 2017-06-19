@@ -1,4 +1,4 @@
-package io.informhunter.datacollector2;
+package io.informhunter.datacollector2.data;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +13,7 @@ public class PositionDataPoint extends DataPoint {
     private float PosY;
 
 
-    protected PositionDataPoint(float x, float y) {
+    public PositionDataPoint(float x, float y) {
         Type = DataPointType.Position;
         PosX = x;
         PosY = y;

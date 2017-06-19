@@ -1,4 +1,4 @@
-package io.informhunter.datacollector2;
+package io.informhunter.datacollector2.data;
 
 import java.io.FileWriter;
 import java.io.IOException;

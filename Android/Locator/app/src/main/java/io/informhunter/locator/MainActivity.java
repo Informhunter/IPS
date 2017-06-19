@@ -25,12 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import io.informhunter.locator.positioning.Location;
@@ -38,9 +34,14 @@ import io.informhunter.locator.positioning.Locator;
 
 public class MainActivity extends AppCompatActivity {
 
+    private List<Float> diffs;
+    private float diffMean = 0.0f;
+    private float diffStd = 0.0f;
+    private float resultStd = 0.0f;
+    private float resultStdTotal = 0.0f;
     private Locator locator;
-    private boolean isCapturing;
     private BluetoothAdapter mAdapter;
+    private float[] currentPoint = new float[]{-5, -5};
     private float[] cursorPoint = new float[]{-5, -5};
     private Bitmap original;
     private int counter = 0;
@@ -52,21 +53,38 @@ public class MainActivity extends AppCompatActivity {
 
             TextView textView = (TextView) findViewById(R.id.textLog);
 
-            counter += 1;
-            if(counter >= 10) {
-                textView.setText("");
-                Map<Integer, Float> averages = locator.GetAverages();
-                for(int minor : averages.keySet()) {
-                    textView.append(String.valueOf(minor) + ": ");
-                    textView.append(String.valueOf(averages.get(minor)) + "\n");
-                }
-                textView.append("Best dist: ");
-                textView.append(String.valueOf(locator.GetBestDistance()) + "\n");
-                Location l = locator.GetLocation();
-                cursorPoint[0] = l.GetX();
-                cursorPoint[1] = l.GetY();
-                redrawPlan();
+            Location l = locator.GetLocation();
+            currentPoint[0] = l.GetX();
+            currentPoint[1] = l.GetY();
+
+            float diff = (float)Math.sqrt((currentPoint[0] - cursorPoint[0]) * (currentPoint[0] - cursorPoint[0]) +
+                    (currentPoint[1] - cursorPoint[1]) * (currentPoint[1] - cursorPoint[1]));
+            diffs.add(diff);
+
+            if(counter > 10) {
+                counter = 0;
+                //diffMean = Util.Mean(diffs);
+                //diffStd = Util.Std(diffs);
+                resultStd = Util.ResultStd(diffs);
             }
+            counter++;
+
+            textView.setText("");
+            //textView.append("Diff mean: " + String.valueOf(diffMean) + "\n");
+            //textView.append("Diff std: " + String.valueOf(diffStd) + "\n");
+            textView.append("Result std: " + String.valueOf(resultStd) + "\n");
+
+
+            Map<Integer, Float> averages = locator.GetAverages();
+            for(int minor : averages.keySet()) {
+                textView.append(String.valueOf(minor) + ": ");
+                textView.append(String.valueOf(averages.get(minor)) + "\n");
+            }
+
+            textView.append("Best dist: ");
+            textView.append(String.valueOf(locator.GetBestDistance()) + "\n");
+
+            redrawPlan();
         }
     };
 
@@ -108,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
         original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
 
-
+        diffs = new ArrayList<>();
     }
 
     @Override
@@ -150,31 +168,32 @@ public class MainActivity extends AppCompatActivity {
         scaleX = (float)mutableBitmap.getWidth() / 13.90f;
         scaleY = (float)mutableBitmap.getHeight() / 7.35f;
 
+        paint.setColor(Color.BLUE);
+        canvas.drawCircle(cursorPoint[0] * scaleX , cursorPoint[1] * scaleY, 25, paint);
+
 
         paint.setColor(Color.GREEN);
-        canvas.drawCircle(cursorPoint[0] * scaleX , cursorPoint[1] * scaleY, 25, paint);
+        canvas.drawCircle(currentPoint[0] * scaleX , currentPoint[1] * scaleY, 25, paint);
 
         flatPlan.setImageBitmap(mutableBitmap);
     }
 
 
     public void onClickButtonLocate(View v) {
+        TextView textView = (TextView) findViewById(R.id.textLog);
 
         locator = new Locator();
-        TextView textView = (TextView) findViewById(R.id.textLog);
-        Button btnNext = (Button) findViewById(R.id.updateButton);
 
         ToggleButton btn = (ToggleButton) v;
         if (btn.isChecked()) {
+            //diffs.clear();
             //Enable
             textView.setText("Capture\n");
-            isCapturing = true;
             mAdapter.startLeScan(leScanCallback);
         } else {
             //Disable
             textView.setText("Stop capture\n");
             mAdapter.stopLeScan(leScanCallback);
-            isCapturing = false;
         }
     }
 
@@ -214,6 +233,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 }
 

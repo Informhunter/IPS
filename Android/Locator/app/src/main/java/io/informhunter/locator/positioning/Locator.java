@@ -17,7 +17,7 @@ import io.informhunter.locator.Util;
 
 public class Locator {
 
-    private int windowSize = 17;
+    private int windowSize = 21;
     private RSSIMap rssiMap;
     private Map<Integer, Window> minorMap;
 
@@ -47,9 +47,9 @@ public class Locator {
         return result;
     }
 
-    public Location GetLocation() {
-        return rssiMap.FindClosest(new RSSIPack(GetAverages()));
-    }
+public Location GetLocation() {
+    return rssiMap.FindClosest(new RSSIPack(GetAverages()));
+}
 
     public float GetBestDistance() {
         return rssiMap.GetBestDistance();

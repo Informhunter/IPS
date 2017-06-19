@@ -1,9 +1,11 @@
-package io.informhunter.datacollector2;
+package io.informhunter.datacollector2.data;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
+
+import io.informhunter.datacollector2.Util;
 
 /**
  * Created by informhunter on 04.03.2017.
@@ -16,7 +18,7 @@ public class RSSIDataPoint extends DataPoint {
     private byte[] Major;
     private byte[] Minor;
 
-    RSSIDataPoint(String name, int RSSI, byte[] data) {
+    public RSSIDataPoint(String name, int RSSI, byte[] data) {
         Type = DataPointType.RSSI;
         this.Name = name;
         this.RSSI = RSSI;

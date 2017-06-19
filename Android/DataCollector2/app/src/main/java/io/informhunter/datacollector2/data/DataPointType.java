@@ -1,4 +1,4 @@
-package io.informhunter.datacollector2;
+package io.informhunter.datacollector2.data;
 
 /**
  * Created by informhunter on 16.03.2017.

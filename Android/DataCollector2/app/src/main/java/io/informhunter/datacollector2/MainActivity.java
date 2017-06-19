@@ -8,9 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
@@ -18,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,13 +28,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.informhunter.datacollector2.data.Collector;
+import io.informhunter.datacollector2.data.DataPoint;
+import io.informhunter.datacollector2.data.PositionDataPoint;
+import io.informhunter.datacollector2.data.RSSIDataPoint;
+import io.informhunter.datacollector2.drawing.FlatMap;
+
 public class MainActivity extends AppCompatActivity {
 
-    private List<float[]> currentRoute = new ArrayList<>();
-    private float[] cursorPoint = new float[]{-5, -5};
-    private Bitmap original;
-    private List<DataPoint> data = new ArrayList<>();
-    private Set<Integer> minorSet;
+    FlatMap flatMap;
+    Collector collector;
 
     private boolean isCapturing = false;
     private BluetoothAdapter mAdapter;
@@ -47,10 +46,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
             RSSIDataPoint dp = new RSSIDataPoint(device.getName(), rssi, scanRecord);
-            data.add(dp);
-            minorSet.add(Util.BytesToInt(dp.GetMinor()));
+            collector.AddDataPoint(dp);
             TextView textView = (TextView) findViewById(R.id.textLog);
-            textView.setText("Minors count: " + String.valueOf(minorSet.size()));
+            textView.setText("Minors count: " + String.valueOf(collector.GetMinorCount()));
         }
     };
 
@@ -62,19 +60,9 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
-    /**
-     * Checks if the app has permission to write to device storage
-     *
-     * If the app does not has permission then the user will be prompted to grant permissions
-     *
-     * @param activity
-     */
     public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     activity,
                     PERMISSIONS_STORAGE,
@@ -104,28 +92,33 @@ public class MainActivity extends AppCompatActivity {
         options.inScaled = true;
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-        original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
+        Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
 
-        minorSet = new HashSet<>();
+        flatMap = new FlatMap(original, 13.90f, 7.35f);
+
+        collector = new Collector();
+
     }
 
 
     public void onClickButtonCapture(View v) {
         TextView textView = (TextView) findViewById(R.id.textLog);
-
         ToggleButton btn = (ToggleButton) v;
+
+        float[] cursor = flatMap.GetCursor();
+
         if (btn.isChecked()) {
             //Enable
             textView.setText("Start capture\n");
-            minorSet.clear();
+            collector.ResetMinorCounter();
             isCapturing = true;
-            data.add(new PositionDataPoint(cursorPoint[0], cursorPoint[1]));
+            collector.AddDataPoint(new PositionDataPoint(cursor[0], cursor[1]));
             mAdapter.startLeScan(leScanCallback);
         } else {
             //Disable
             mAdapter.stopLeScan(leScanCallback);
-            currentRoute.add(cursorPoint.clone());
-            data.add(new PositionDataPoint(cursorPoint[0], cursorPoint[1]));
+            flatMap.AddRoutePoint(cursor);
+            collector.AddDataPoint(new PositionDataPoint(cursor[0], cursor[1]));
             redrawPlan();
             isCapturing = false;
             textView.setText("Stop capture\n");
@@ -135,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        TextView coordsText = (TextView) findViewById(R.id.coordsText);
         ImageView flatPlan = (ImageView) findViewById(R.id.flatPlan);
 
         if(isCapturing) {
@@ -147,67 +139,21 @@ public class MainActivity extends AppCompatActivity {
 
         float x = event.getX();
         float y = event.getY();
-        coordsText.setText(String.valueOf(x - loc[0]) + " " + String.valueOf(y - loc[1]) + "\n");
 
-        x = (x - loc[0]) / flatPlan.getWidth() * 13.90f;
-        y = (y - loc[1]) / flatPlan.getHeight() * 7.35f;
+        x = (x - loc[0]) / flatPlan.getWidth();
+        y = (y - loc[1]) / flatPlan.getHeight();
 
-        cursorPoint[0] = x;
-        cursorPoint[1] = y;
-
-        coordsText.append(String.valueOf(x) + " " + String.valueOf(y) + "\n");
+        float[] cursor = new float[]{x, y};
+        flatMap.SetCursor(cursor);
 
         redrawPlan();
 
         return super.onTouchEvent(event);
     }
 
-    private void drawPoint(float x, float y, boolean coordsAreReal) {
-        ImageView flatPlan = (ImageView) findViewById(R.id.flatPlan);
-
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setColor(Color.RED);
-
-        Bitmap mutableBitmap = original.copy(Bitmap.Config.ARGB_8888, true);
-
-        Canvas canvas = new Canvas(mutableBitmap);
-
-        float scaleX, scaleY;
-        if(coordsAreReal) {
-            scaleX = (float)mutableBitmap.getWidth() / 13.90f;
-            scaleY = (float)mutableBitmap.getHeight() / 7.35f;
-        } else {
-            scaleX = (float)mutableBitmap.getWidth() / (float)flatPlan.getWidth();
-            scaleY = (float)mutableBitmap.getHeight() / (float)flatPlan.getHeight();
-        }
-
-        canvas.drawCircle(x * scaleX , y * scaleY, 25, paint);
-        flatPlan.setImageBitmap(mutableBitmap);
-    }
-
     private void redrawPlan() {
         ImageView flatPlan = (ImageView) findViewById(R.id.flatPlan);
-
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setColor(Color.RED);
-
-        Bitmap mutableBitmap = original.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(mutableBitmap);
-
-        float scaleX, scaleY;
-        scaleX = (float)mutableBitmap.getWidth() / 13.90f;
-        scaleY = (float)mutableBitmap.getHeight() / 7.35f;
-
-        for(float[] point : currentRoute) {
-            canvas.drawCircle(point[0] * scaleX , point[1] * scaleY, 25, paint);
-        }
-
-        paint.setColor(Color.GREEN);
-        canvas.drawCircle(cursorPoint[0] * scaleX , cursorPoint[1] * scaleY, 25, paint);
-
-        flatPlan.setImageBitmap(mutableBitmap);
+        flatPlan.setImageBitmap(flatMap.Render());
     }
 
     public void onClickButtonClear(View v) {
@@ -217,97 +163,30 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickButtonSave(View v) {
         TextView textLog = (TextView) findViewById(R.id.textLog);
-        textLog.append("Total captures: " + String.valueOf(data.size()) + "\n");
-        saveData(data);
+        textLog.append("Total captures: " + String.valueOf(collector.GetDataSize()) + "\n");
+
+        EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
+        String sessionName = captureEdit.getText().toString();
+
+        collector.SaveData(sessionName);
     }
 
 
     public void onResetRouteButtonClick(View v) {
-        currentRoute.clear();
+        flatMap.ClearRoute();
         //Clear data buffer
-        data.clear();
+        collector.ResetData();
         redrawPlan();
-    }
-
-
-    private void saveData(List<DataPoint> data) {
-        EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
-
-        String sessionName = captureEdit.getText().toString();
-
-        String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                + "/" + "datacollector" + "/" + sessionName;
-
-
-        File folder = new File(folderPath);
-        boolean created = folder.mkdirs();
-
-        if(!created) {
-            return;
-        }
-
-        String positionDataFileName = folder.getPath() + "/" + "position_data.csv";
-        String rssiDataFileName = folder.getPath() + "/" + "rssi_data.csv";
-        String sessionInfoFileName = folder.getPath() + "/" + "session_info.csv";
-
-        try {
-            FileWriter rssiFW = new FileWriter(rssiDataFileName);
-            RSSIDataPoint.WriteHeaderToFile(rssiFW);
-
-            FileWriter posFW = new FileWriter(positionDataFileName);
-            PositionDataPoint.WriteHeaderToFile(posFW);
-
-            FileWriter sessFW = new FileWriter(sessionInfoFileName);
-
-            sessFW.write(sessionName + "\n");
-            sessFW.write(new Date().toString());
-            sessFW.close();
-
-            for(DataPoint dp : data) {
-                switch (dp.GetPointType()) {
-                    case Position:
-                        dp.WriteToFile(posFW);
-                        break;
-                    case RSSI:
-                        dp.WriteToFile(rssiFW);
-                        break;
-                }
-            }
-            posFW.close();
-            rssiFW.close();
-        } catch (Exception e) {
-            e.getMessage();
-        }
     }
 
     public void onSendButtonClick(View v) {
         EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
-
-        String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                + "/" + "datacollector" + "/" + captureEdit.getText().toString();
-
-        File folder = new File(folderPath);
-
-        String positionDataFileName = folder.toString() + "/" + "position_data.csv";
-        String rssiDataFileName = folder.toString() + "/" + "rssi_data.csv";
-        String sessionInfoFileName = folder.getPath() + "/" + "session_info.csv";
-        TextView textLog = (TextView) findViewById(R.id.textLog);
-
         EditText urlEdit = (EditText) findViewById(R.id.collectorURLEdit);
 
+        collector.SendData(
+                captureEdit.getText().toString(),
+                urlEdit.getText().toString()
+        );
 
-        try {
-            MultipartUtility multipart = new MultipartUtility(urlEdit.getText().toString(), "UTF-8");
-            File rssiDataFile = new File(rssiDataFileName);
-            File positionDataFile = new File(positionDataFileName);
-            File sessionDataFile = new File(sessionInfoFileName);
-            multipart.addFilePart("rssi_data", rssiDataFile);
-            multipart.addFilePart("position_data", positionDataFile);
-            multipart.addFilePart("session_data", sessionDataFile);
-            multipart.finish();
-        } catch (Exception e) {
-            textLog.append("Exception: " + e.toString() + "\n");
-        }
-        textLog.append("Send data\n");
     }
 }

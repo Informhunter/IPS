@@ -41,30 +41,19 @@ class RSSIMap {
         }
     }
 
-    public Location FindClosest(RSSIPack fingerprint) {
-        float bestDist = 100000000;
-        Location bestLocation = new Location(0, 0);
-        for(Location location : rssiMap.keySet()) {
-            //float dist = rssiMap.get(location).EucledianDistance(fingerprint);
-            //float dist = rssiMap.get(location).CosineDistance(fingerprint);
-            float dist = rssiMap.get(location).GaussianDistance(fingerprint);
-            if(bestDist > dist) {
-                bestDist = dist;
-                bestLocation = location;
-            }
+public Location FindClosest(RSSIPack fingerprint) {
+    float bestDist = Float.POSITIVE_INFINITY;
+    Location bestLocation = new Location(0, 0);
+    for(Location location : rssiMap.keySet()) {
+        float dist = rssiMap.get(location).GaussianDistance(fingerprint);
+        if(bestDist > dist) {
+            bestDist = dist;
+            bestLocation = location;
         }
-
-        RSSIPack pack = rssiMap.get(bestLocation);
-        StringBuilder b = new StringBuilder();
-        for(Integer i : beaconMinors) {
-            b.append(pack.GetRSSI(i));
-            b.append(" ");
-        }
-        b.append(bestDist);
-        Log.e("Loc: ", b.toString());
-        distance = bestDist;
-        return bestLocation;
     }
+    distance = bestDist;
+    return bestLocation;
+}
 
     public float GetBestDistance() {
         return distance;
