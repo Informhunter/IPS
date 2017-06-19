@@ -2,12 +2,11 @@ package io.informhunter.locator.positioning;
 
 
 import android.os.Environment;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import io.informhunter.locator.RSSIDataPoint;
+import io.informhunter.locator.data.RSSIDataPoint;
 import io.informhunter.locator.Util;
 
 /**

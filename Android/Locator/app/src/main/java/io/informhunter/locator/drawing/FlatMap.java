@@ -1,4 +1,4 @@
-package io.informhunter.datacollector2.drawing;
+package io.informhunter.locator.drawing;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

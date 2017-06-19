@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.informhunter.locator.data.RSSIDataPoint;
 import io.informhunter.locator.positioning.Location;
 import io.informhunter.locator.positioning.Locator;
 
