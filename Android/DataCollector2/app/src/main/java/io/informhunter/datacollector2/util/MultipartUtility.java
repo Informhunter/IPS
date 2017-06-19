@@ -1,4 +1,4 @@
-package io.informhunter.datacollector2;
+package io.informhunter.datacollector2.util;
 
 import java.io.BufferedReader;
 import java.io.File;

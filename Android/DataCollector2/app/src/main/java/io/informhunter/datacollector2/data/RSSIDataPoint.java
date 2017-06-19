@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
-import io.informhunter.datacollector2.Util;
+import io.informhunter.datacollector2.util.Util;
 
 /**
  * Created by informhunter on 04.03.2017.

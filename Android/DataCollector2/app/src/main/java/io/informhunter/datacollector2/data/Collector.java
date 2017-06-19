@@ -1,7 +1,6 @@
 package io.informhunter.datacollector2.data;
 
 import android.os.Environment;
-import android.provider.ContactsContract;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,8 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import io.informhunter.datacollector2.MultipartUtility;
-import io.informhunter.datacollector2.Util;
+import io.informhunter.datacollector2.util.MultipartUtility;
+import io.informhunter.datacollector2.util.Util;
 
 /**
  * Created by informhunter on 19.06.2017.
@@ -98,7 +97,7 @@ public class Collector {
         return true;
     }
 
-    public void SendData(String sessionName, String url) {
+    public String SendData(String sessionName, String url) {
         String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                 + "/" + "datacollector" + "/" + sessionName;
 
@@ -118,7 +117,8 @@ public class Collector {
             multipart.addFilePart("session_data", sessionDataFile);
             multipart.finish();
         } catch (Exception e) {
-            e.toString();
+            return e.toString();
         }
+        return null;
     }
 }

@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,16 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import io.informhunter.datacollector2.data.Collector;
-import io.informhunter.datacollector2.data.DataPoint;
 import io.informhunter.datacollector2.data.PositionDataPoint;
 import io.informhunter.datacollector2.data.RSSIDataPoint;
 import io.informhunter.datacollector2.drawing.FlatMap;
@@ -54,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
+    private static String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -65,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     activity,
-                    PERMISSIONS_STORAGE,
+                    PERMISSIONS,
                     REQUEST_EXTERNAL_STORAGE
             );
         }
@@ -76,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!mAdapter.isEnabled()) {
@@ -183,10 +171,36 @@ public class MainActivity extends AppCompatActivity {
         EditText captureEdit = (EditText) findViewById(R.id.dataNameEdit);
         EditText urlEdit = (EditText) findViewById(R.id.collectorURLEdit);
 
-        collector.SendData(
+        new SendDataTask().execute(
                 captureEdit.getText().toString(),
                 urlEdit.getText().toString()
         );
-
     }
+
+    class SendDataTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            TextView textLog = (TextView) findViewById(R.id.textLog);
+            textLog.append("Upload started\n");
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            TextView textLog = (TextView) findViewById(R.id.textLog);
+            if(s == null) {
+                textLog.append("Upload done\n");
+            } else {
+                textLog.append("Upload failed: " + s + "\n");
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            String sessionName = strings[1];
+            return collector.SendData(url, sessionName);
+        }
+    }
+
 }
