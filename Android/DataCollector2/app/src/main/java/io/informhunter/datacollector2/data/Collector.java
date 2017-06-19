@@ -118,6 +118,7 @@ public class Collector {
             multipart.addFilePart("session_data", sessionDataFile);
             multipart.finish();
         } catch (Exception e) {
+            e.toString();
         }
     }
 }

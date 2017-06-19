@@ -38,7 +38,7 @@
             android:id="@+id/coordsText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.60"
+            android:layout_weight="0.20"
             android:textSize="8sp" />
 
         <TextView
@@ -46,13 +46,12 @@
             android:layout_width="match_parent"
             android:layout_height="47dp"
             android:layout_alignParentStart="true"
-            android:layout_weight="0.64" />
+            android:layout_weight="0.32" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.10"
             android:text="Collector URL" />
 
         <EditText
@@ -74,7 +73,6 @@
             android:id="@+id/dataNameEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.10"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="capture" />
@@ -87,11 +85,11 @@
 
             <ToggleButton
                 android:id="@+id/toggleCaptureButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
-                android:layout_weight="0.56"
+                android:layout_weight="0.50"
                 android:checked="false"
                 android:onClick="onClickButtonCapture"
                 android:padding="5dp"
@@ -104,46 +102,48 @@
                 android:id="@+id/resetRouteButton"
                 android:layout_width="101dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.50"
                 android:onClick="onResetRouteButtonClick"
                 android:padding="0dp"
-                android:text="Reset route"
-                android:layout_weight="0.37" />
+                android:text="Reset route" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="29dp"
             android:orientation="horizontal"
-            android:weightSum="1">
+            android:weightSum="1"
+            android:layout_weight="0.08">
 
             <Button
                 android:id="@+id/clearButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="13dp"
                 android:layout_toStartOf="@+id/saveButton"
-                android:layout_weight="1"
+                android:layout_weight="0.33"
                 android:onClick="onClickButtonClear"
                 android:padding="0dp"
                 android:text="Clear log" />
 
             <Button
                 android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_weight="0.31"
+                android:layout_weight="0.33"
                 android:onClick="onClickButtonSave"
                 android:padding="0dp"
                 android:text="Save data" />
 
             <Button
                 android:id="@+id/sendButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.33"
                 android:onClick="onSendButtonClick"
                 android:padding="0dp"
                 android:text="Send" />
