@@ -50,7 +50,7 @@ public class Collector {
         return data.size();
     }
 
-    public boolean SaveData(String sessionName) {
+    public String SaveData(String sessionName) {
         String folderPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                 + "/" + "datacollector" + "/" + sessionName;
 
@@ -59,7 +59,7 @@ public class Collector {
         boolean created = folder.mkdirs();
 
         if(!created) {
-            return false;
+            return "Folder already exists";
         }
 
         String positionDataFileName = folder.getPath() + "/" + "position_data.csv";
@@ -92,9 +92,9 @@ public class Collector {
             posFW.close();
             rssiFW.close();
         } catch (Exception e) {
-            return false;
+            return e.toString();
         }
-        return true;
+        return null;
     }
 
     public String SendData(String sessionName, String url) {
