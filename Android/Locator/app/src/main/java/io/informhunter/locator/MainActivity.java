@@ -8,9 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.informhunter.locator.data.RSSIDataPoint;
+import io.informhunter.locator.drawing.FlatMap;
 import io.informhunter.locator.positioning.Location;
 import io.informhunter.locator.positioning.Locator;
 
@@ -41,9 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private float resultStdTotal = 0.0f;
     private Locator locator;
     private BluetoothAdapter mAdapter;
-    private float[] currentPoint = new float[]{-5, -5};
-    private float[] cursorPoint = new float[]{-5, -5};
-    private Bitmap original;
+    private FlatMap flatMap;
+
     private int counter = 0;
 
     final private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
@@ -54,8 +51,11 @@ public class MainActivity extends AppCompatActivity {
             TextView textView = (TextView) findViewById(R.id.textLog);
 
             Location l = locator.GetLocation();
+            float[] currentPoint = new float[2];
             currentPoint[0] = l.GetX();
             currentPoint[1] = l.GetY();
+            flatMap.SetCurrentPoint(currentPoint);
+            float[] cursorPoint = flatMap.GetCursor();
 
             float diff = (float)Math.sqrt((currentPoint[0] - cursorPoint[0]) * (currentPoint[0] - cursorPoint[0]) +
                     (currentPoint[1] - cursorPoint[1]) * (currentPoint[1] - cursorPoint[1]));
@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
+    private static final int REQUEST_PERMISSIONS = 1;
+    private static String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
+                    PERMISSIONS,
+                    REQUEST_PERMISSIONS
             );
         }
     }
@@ -124,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
         options.inScaled = true;
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-        original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
+        Bitmap original = BitmapFactory.decodeResource(getResources(), R.drawable.cropped_flat, options);
+        flatMap = new FlatMap(original, 13.90f, 7.35f);
 
         diffs = new ArrayList<>();
     }
@@ -141,11 +142,15 @@ public class MainActivity extends AppCompatActivity {
         float y = event.getY();
         coordsText.setText(String.valueOf(x - loc[0]) + " " + String.valueOf(y - loc[1]) + "\n");
 
-        x = (x - loc[0]) / flatPlan.getWidth() * 13.90f;
-        y = (y - loc[1]) / flatPlan.getHeight() * 7.35f;
+        x = (x - loc[0]) / flatPlan.getWidth();
+        y = (y - loc[1]) / flatPlan.getHeight();
+
+        float[] cursorPoint = new float[2];
 
         cursorPoint[0] = x;
         cursorPoint[1] = y;
+
+        flatMap.SetCursor(cursorPoint);
 
         coordsText.append(String.valueOf(x) + " " + String.valueOf(y) + "\n");
 
@@ -156,26 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void redrawPlan() {
         ImageView flatPlan = (ImageView) findViewById(R.id.flatPlan);
-
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setColor(Color.RED);
-
-        Bitmap mutableBitmap = original.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(mutableBitmap);
-
-        float scaleX, scaleY;
-        scaleX = (float)mutableBitmap.getWidth() / 13.90f;
-        scaleY = (float)mutableBitmap.getHeight() / 7.35f;
-
-        paint.setColor(Color.BLUE);
-        canvas.drawCircle(cursorPoint[0] * scaleX , cursorPoint[1] * scaleY, 25, paint);
-
-
-        paint.setColor(Color.GREEN);
-        canvas.drawCircle(currentPoint[0] * scaleX , currentPoint[1] * scaleY, 25, paint);
-
-        flatPlan.setImageBitmap(mutableBitmap);
+        flatPlan.setImageBitmap(flatMap.Render());
     }
 
 
