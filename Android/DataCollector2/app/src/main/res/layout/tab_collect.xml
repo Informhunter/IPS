@@ -7,15 +7,16 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.informhunter.datacollector2.MainTabActivity$PlaceholderFragment">
+    tools:context="io.informhunter.datacollector2.CollectFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:orientation="vertical"
-        android:weightSum="1">
+        android:padding="0dp"
+        android:weightSum="1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -24,67 +25,45 @@
 
             <ImageView
                 android:id="@+id/flatPlan"
-                app:srcCompat="@drawable/cropped_flat"
                 android:layout_width="wrap_content"
                 android:layout_height="184dp"
-                android:src="@drawable/cropped_flat" />
+                app:srcCompat="@drawable/cropped_flat" />
 
         </FrameLayout>
 
         <TextView
-            android:id="@+id/coordsText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.36" />
-
-        <TextView
             android:id="@+id/textLog"
             android:layout_width="match_parent"
-            android:layout_height="85dp"
-            android:layout_alignParentStart="true"
-            android:layout_weight="0.55" />
+            android:layout_height="207dp"
+            android:layout_alignParentStart="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <ToggleButton
                 android:id="@+id/toggleCaptureButton"
-                android:layout_width="153dp"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
                 android:checked="false"
                 android:onClick="onClickButtonCapture"
+                android:padding="5dp"
                 android:text="Collect"
                 android:textOff="Start capture"
                 android:textOn="Stop capture"
                 tools:text="Collect" />
 
             <Button
-                android:id="@+id/addPointButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/linearLayout"
-                android:onClick="onAddPointButtonClick"
-                android:text="Add point" />
-
-            <Button
-                android:id="@+id/nextPointButton"
-                android:layout_width="wrap_content"
-                android:layout_height="62dp"
-                android:enabled="false"
-                android:onClick="onNextPointButtonClick"
-                android:text="Next point" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal">
+                android:id="@+id/resetRouteButton"
+                android:layout_width="101dp"
+                android:layout_height="wrap_content"
+                android:onClick="onResetRouteButtonClick"
+                android:padding="0dp"
+                android:text="Reset route" />
 
             <Button
                 android:id="@+id/saveButton"
@@ -92,35 +71,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_weight="1"
                 android:onClick="onClickButtonSave"
+                android:padding="0dp"
                 android:text="Save data" />
 
-            <Button
-                android:id="@+id/clearButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="13dp"
-                android:layout_toStartOf="@+id/saveButton"
-                android:layout_weight="0.43"
-                android:onClick="onClickButtonClear"
-                android:text="Clear log" />
-
-            <Button
-                android:id="@+id/resetRouteButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onResetRouteButtonClick"
-                android:text="Reset route" />
-
-            <Button
-                android:id="@+id/sendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:onClick="onSendButtonClick"
-                android:text="Send" />
         </LinearLayout>
 
     </LinearLayout>
