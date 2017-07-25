@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         pa.addFragment(new DynamicCollectorFragment());
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mViewPager.setAdapter(pa);
+
     }
 
 
