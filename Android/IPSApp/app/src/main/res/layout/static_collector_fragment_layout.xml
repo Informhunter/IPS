@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <io.informhunter.ipsapp.TouchImageView
+    <io.informhunter.ipsapp.NavigationMapView
         android:id="@+id/touchImageView"
         android:layout_width="match_parent"
         android:layout_height="298dp"

@@ -1,7 +1,13 @@
 package io.informhunter.ipsapp;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,14 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import io.informhunter.ipsapp.util.Util;
+
 /**
  * Created by informhunter on 21.07.2017.
  */
 
 public class StaticCollectorFragment extends Fragment implements View.OnTouchListener {
 
-    private TouchImageView mapImageViewer;
-    private TextView logTextView;
+    TouchImageView mapImageViewer;
+    TextView logTextView;
+    Bitmap mapBitmap;
+    float[] cursorPosition;
+
 
     @Nullable
     @Override
@@ -30,6 +41,11 @@ public class StaticCollectorFragment extends Fragment implements View.OnTouchLis
         mapImageViewer = (TouchImageView) view.findViewById(R.id.touchImageView);
         mapImageViewer.setOnTouchListener(this);
 
+        BitmapDrawable drawable = (BitmapDrawable) mapImageViewer.getDrawable();
+        mapBitmap = drawable.getBitmap().copy(Bitmap.Config.ARGB_8888, true);
+
+        cursorPosition = new float[2];
+
         return view;
     }
 
@@ -37,39 +53,48 @@ public class StaticCollectorFragment extends Fragment implements View.OnTouchLis
     public boolean onTouch(View view, MotionEvent motionEvent) {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
-        int viewerPosition[] = new int[2];
 
+        int viewerPosition[] = new int[2];
         mapImageViewer.getLocationOnScreen(viewerPosition);
 
-        int[] imageOffset = getBitmapOffset(mapImageViewer, true);
+        PointF scrollPosition = mapImageViewer.getScrollPosition();
+        int[] imageOffset = Util.getBitmapOffset(mapImageViewer, true);
+        float zoom = mapImageViewer.getCurrentZoom();
+
+        x = x - imageOffset[0];
+        y = y - imageOffset[1];
+
+        cursorPosition[0] = x;
+        cursorPosition[1] = y;
+
+
 
         logTextView.setText("");
         logTextView.append("X: " + String.valueOf(x) + "\n");
         logTextView.append("Y: " + String.valueOf(y) + "\n");
-        logTextView.append("Image offset X: " + String.valueOf(imageOffset[0]) + "\n");
-        logTextView.append("Image offset Y: " + String.valueOf(imageOffset[1]) + "\n");
+        RectF rectF = mapImageViewer.getZoomedRect();
+        logTextView.append("Image left: " + String.valueOf(rectF.left) + "\n");
+        logTextView.append("Image top: " + String.valueOf(rectF.top) + "\n");
+        logTextView.append("Image right: " + String.valueOf(rectF.right) + "\n");
+        logTextView.append("Image bottom: " + String.valueOf(rectF.bottom) + "\n");
 
+        logTextView.append("Zoom: " + String.valueOf(zoom) + "\n");
+
+        redrawMap();
         return false;
     }
 
-    public static int[] getBitmapOffset(TouchImageView img,  Boolean includeLayout) {
-        int[] offset = new int[2];
-        float[] values = new float[9];
+    private void redrawMap() {
+        Bitmap mutableBitmap = mapBitmap.copy(Bitmap.Config.ARGB_8888, true);
 
-        Matrix m = img.getImageMatrix();
-        m.getValues(values);
+        Canvas canvas = new Canvas(mutableBitmap);
 
-        offset[0] = (int) values[2];
-        offset[1] = (int) values[5];
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
 
-        if (includeLayout) {
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) img.getLayoutParams();
-            int paddingTop = (int) (img.getPaddingTop() );
-            int paddingLeft = (int) (img.getPaddingLeft() );
+        paint.setColor(Color.GREEN);
+        canvas.drawCircle(cursorPosition[0], cursorPosition[1], 25, paint);
 
-            offset[0] += paddingTop + lp.topMargin;
-            offset[1] += paddingLeft + lp.leftMargin;
-        }
-        return offset;
+        mapImageViewer.setImageBitmap(mutableBitmap);
     }
 }
